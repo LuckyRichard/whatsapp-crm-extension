@@ -1,0 +1,61 @@
+{
+  "manifest_version": 3,
+  "name": "WhatsApp CRM - 客户管理助手",
+  "version": "2.1.0",
+  "description": "WhatsApp Web 客户管理插件：标签分类、跟进提醒、话术模板、AI客户分析、自动记录、批量操作、数据统计、跨设备云同步",
+  "permissions": [
+    "storage",
+    "alarms",
+    "notifications",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://web.whatsapp.com/*",
+    "https://*/*",
+    "http://*/*",
+    "https://firestore.googleapis.com/*",
+    "https://identitytoolkit.googleapis.com/*",
+    "https://securetoken.googleapis.com/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://web.whatsapp.com/*"],
+      "js": [
+        "lib/firebase-app-compat.js",
+        "lib/firebase-auth-compat.js",
+        "lib/firebase-firestore-compat.js",
+        "shared/sync.js",
+        "shared/storage.js",
+        "shared/templates.js",
+        "shared/analytics.js",
+        "content.js"
+      ],
+      "css": ["styles/content.css"],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA1T9PWZ1o9X9NPwLGCcCky6F1jLuerVVFNjInEnbi6qVDfqtEWW51u8KCS4CIgfAYHoR5TAlMWF9Cz4NzB3H4gHN9f0j+VbC0ldS1x8OHdNi22GAKR/pgnAjcP7OcGIMWLP/ThlNUUVsPEkUqNfEmr+m8eSxsQKY4W3hDtG7syIka++9M64z1TJKOjDfesiDLMjdsv5wkk5IQhmGEaee6PxPf29FIFgSgs5fHQPHjGdKsN9tlEpzhtyVOiw2jwbaVjZ9a2lC42wG6S40QHK4tgljMN8Zm1I4HXWM1jj/mMxU4hUb6vOCbUX5NkmNCbrJJ8h+KOdIpeuOBIcvEsC8dYwIDAQAB",
+  "update_url": "https://luckyrichard.github.io/whatsapp-crm-extension/updates.xml",
+  "web_accessible_resources": [
+    {
+      "resources": ["dashboard.html", "dashboard.css", "dashboard.js", "styles/*", "shared/*", "lib/*"],
+      "matches": ["https://web.whatsapp.com/*"]
+    }
+  ]
+}

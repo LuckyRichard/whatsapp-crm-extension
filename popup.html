@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp CRM</title>
+  <link rel="stylesheet" href="styles/popup.css">
+</head>
+<body>
+  <div class="popup-container">
+    <div class="popup-header">
+      <h2>📋 WhatsApp CRM</h2>
+      <span class="version">v1.0</span>
+    </div>
+
+    <div class="popup-stats" id="stats">
+      <div class="stat-item">
+        <span class="stat-value" id="stat-total">-</span>
+        <span class="stat-label">客户总数</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-pending">-</span>
+        <span class="stat-label">待跟进</span>
+      </div>
+      <div class="stat-item">
+        <span class="stat-value" id="stat-overdue">-</span>
+        <span class="stat-label">已过期</span>
+      </div>
+    </div>
+
+    <div class="popup-section">
+      <h3>⏰ 待跟进提醒</h3>
+      <div id="reminders-list" class="reminders-list">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+
+    <div class="popup-section">
+      <h3>🏷️ 快捷标签</h3>
+      <div id="quick-tags" class="quick-tags">
+        <div class="loading">加载中...</div>
+      </div>
+    </div>
+
+    <div class="popup-actions">
+      <button id="btn-dashboard" class="btn-primary">📊 打开管理面板</button>
+      <button id="btn-export" class="btn-secondary">📥 导出数据</button>
+    </div>
+  </div>
+
+  <script src="lib/firebase-app-compat.js"></script>
+  <script src="lib/firebase-auth-compat.js"></script>
+  <script src="lib/firebase-firestore-compat.js"></script>
+  <script src="shared/sync.js"></script>
+  <script src="shared/storage.js"></script>
+  <script src="shared/templates.js"></script>
+  <script src="shared/analytics.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

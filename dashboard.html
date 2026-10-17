@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp CRM - 管理面板</title>
+  <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+  <div class="app">
+    <!-- 侧边导航 -->
+    <nav class="sidebar">
+      <div class="sidebar-header">
+        <h2>📋 WA CRM</h2>
+      </div>
+      <ul class="nav-list">
+        <li class="nav-item active" data-tab="overview">
+          <span class="nav-icon">📊</span> 数据总览
+        </li>
+        <li class="nav-item" data-tab="customers">
+          <span class="nav-icon">👥</span> 客户管理
+        </li>
+        <li class="nav-item" data-tab="templates">
+          <span class="nav-icon">💬</span> 话术模板
+        </li>
+        <li class="nav-item" data-tab="reminders">
+          <span class="nav-icon">⏰</span> 跟进提醒
+        </li>
+        <li class="nav-item" data-tab="batch">
+          <span class="nav-icon">📤</span> 批量操作
+        </li>
+        <li class="nav-item" data-tab="settings">
+          <span class="nav-icon">⚙️</span> 设置
+        </li>
+      </ul>
+    </nav>
+
+    <!-- 主内容区 -->
+    <main class="main-content">
+      <!-- 数据总览 -->
+      <section id="tab-overview" class="tab-content active">
+        <h1>数据总览</h1>
+        <div class="stats-grid" id="overview-stats"></div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <h3>📈 消息趋势（近30天）</h3>
+            <div id="chart-trend" class="chart-container"></div>
+          </div>
+          <div class="chart-card">
+            <h3>🏷️ 客户分类</h3>
+            <div id="chart-category" class="chart-container"></div>
+          </div>
+        </div>
+        <div class="charts-row">
+          <div class="chart-card">
+            <h3>🔥 活跃客户 TOP 10</h3>
+            <div id="top-customers" class="list-container"></div>
+          </div>
+          <div class="chart-card">
+            <h3>💬 模板使用排行</h3>
+            <div id="template-ranking" class="list-container"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 客户管理 -->
+      <section id="tab-customers" class="tab-content">
+        <div class="section-header">
+          <h1>客户管理</h1>
+          <div class="header-actions">
+            <input type="text" id="customer-search" placeholder="搜索客户名称/手机/公司..." class="search-input">
+            <select id="customer-tag-filter" class="filter-select">
+              <option value="">全部标签</option>
+            </select>
+            <button id="btn-import-data" class="btn-outline">📥 导入数据</button>
+            <button id="btn-export-data" class="btn-outline">📤 导出数据</button>
+          </div>
+        </div>
+        <div class="table-wrapper">
+          <table class="data-table" id="customers-table">
+            <thead>
+              <tr>
+                <th><input type="checkbox" id="select-all-customers"></th>
+                <th>客户名称</th>
+                <th>手机号</th>
+                <th>公司</th>
+                <th>标签</th>
+                <th>消息数</th>
+                <th>最后活跃</th>
+                <th>操作</th>
+              </tr>
+            </thead>
+            <tbody id="customers-tbody"></tbody>
+          </table>
+        </div>
+        <div class="batch-actions" id="customer-batch-actions" style="display:none">
+          <span id="selected-count">已选 0 个</span>
+          <button class="btn-sm btn-primary" onclick="batchAddTag()">批量加标签</button>
+          <button class="btn-sm btn-danger" onclick="batchDelete()">批量删除</button>
+        </div>
+      </section>
+
+      <!-- 话术模板 -->
+      <section id="tab-templates" class="tab-content">
+        <div class="section-header">
+          <h1>话术模板</h1>
+          <button id="btn-add-template" class="btn-primary">+ 新建模板</button>
+        </div>
+        <div class="template-grid" id="template-grid"></div>
+      </section>
+
+      <!-- 跟进提醒 -->
+      <section id="tab-reminders" class="tab-content">
+        <h1>跟进提醒</h1>
+        <div class="reminder-columns">
+          <div class="reminder-col">
+            <h3>⚠️ 已过期</h3>
+            <div id="reminders-overdue" class="reminder-list"></div>
+          </div>
+          <div class="reminder-col">
+            <h3>📋 待跟进</h3>
+            <div id="reminders-pending" class="reminder-list"></div>
+          </div>
+          <div class="reminder-col">
+            <h3>✅ 已完成</h3>
+            <div id="reminders-done" class="reminder-list"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 批量操作 -->
+      <section id="tab-batch" class="tab-content">
+        <h1>批量操作</h1>
+        <div class="batch-panel">
+          <div class="batch-step">
+            <h3>1. 选择模板</h3>
+            <select id="batch-template-select" class="form-select">
+              <option value="">选择话术模板...</option>
+            </select>
+          </div>
+          <div class="batch-step">
+            <h3>2. 填写变量</h3>
+            <div id="batch-variables" class="variables-form"></div>
+          </div>
+          <div class="batch-step">
+            <h3>3. 选择客户</h3>
+            <div class="batch-filter">
+              <select id="batch-tag-filter" class="form-select">
+                <option value="">按标签筛选...</option>
+              </select>
+              <input type="text" id="batch-search" placeholder="搜索客户..." class="search-input">
+            </div>
+            <div class="batch-customer-list" id="batch-customer-list"></div>
+            <div class="batch-select-all">
+              <label><input type="checkbox" id="batch-select-all"> 全选</label>
+              <span id="batch-selected-count">已选 0 个客户</span>
+            </div>
+          </div>
+          <div class="batch-step">
+            <h3>4. 预览消息</h3>
+            <div id="batch-preview" class="batch-preview">选择模板和客户后预览消息内容</div>
+          </div>
+          <button id="btn-batch-send" class="btn-primary btn-large">📋 复制消息到剪贴板（逐个发送）</button>
+          <p class="batch-hint">提示：消息会逐条复制到剪贴板，每次复制后自动跳转到 WhatsApp 输入框，按 Ctrl+V 粘贴后发送</p>
+        </div>
+      </section>
+
+      <!-- 设置 -->
+      <section id="tab-settings" class="tab-content">
+        <h1>设置</h1>
+        <div class="settings-panel">
+          <div class="setting-item">
+            <label>自动记录聊天消息</label>
+            <input type="checkbox" id="setting-auto-record" checked>
+          </div>
+          <div class="setting-item">
+            <label>提醒检查间隔（分钟）</label>
+            <input type="number" id="setting-check-interval" value="5" min="1" max="60">
+          </div>
+          <div class="setting-item">
+            <label>我的名字（用于模板变量）</label>
+            <input type="text" id="setting-my-name" placeholder="例如：Steven">
+          </div>
+          <div class="setting-item">
+            <label>公司名称（用于模板变量）</label>
+            <input type="text" id="setting-company" placeholder="例如：XX Trading Co.">
+          </div>
+          <button id="btn-save-settings" class="btn-primary">保存设置</button>
+
+          <hr>
+          <h3>🏷️ 自定义标签</h3>
+          <p style="font-size:12px;color:#999;margin-bottom:16px">设置常用标签，在侧边栏添加标签时可快速选择</p>
+          <div id="custom-tags-list" class="custom-tags-list"></div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <input type="text" id="new-tag-input" placeholder="输入新标签名称" style="flex:1">
+            <button id="btn-add-tag" class="btn-primary">添加标签</button>
+          </div>
+
+          <hr>
+          <h3>🤖 AI 分析配置</h3>
+          <p style="font-size:12px;color:#999;margin-bottom:16px">支持任何 OpenAI 兼容格式的接口，如 ChatGPT、DeepSeek、通义千问等</p>
+          <div class="setting-item">
+            <label>API 地址</label>
+            <input type="text" id="setting-ai-url" placeholder="例如：https://api.openai.com/v1">
+          </div>
+          <div class="setting-item">
+            <label>API 密钥</label>
+            <input type="password" id="setting-ai-key" placeholder="sk-...">
+          </div>
+          <div class="setting-item">
+            <label>模型名称</label>
+            <input type="text" id="setting-ai-model" placeholder="例如：gpt-3.5-turbo">
+          </div>
+          <button id="btn-save-ai-settings" class="btn-primary">保存 AI 配置</button>
+
+          <hr>
+          <h3>☁️ 云同步配置</h3>
+          <p style="font-size:12px;color:#999;margin-bottom:16px">配置 Firebase 实现跨设备数据同步。在任何电脑上登录同一账号即可获取所有客户数据。<br>
+            <a href="https://console.firebase.google.com/" target="_blank" style="color:#128C7E">前往 Firebase 控制台</a> → 创建项目 → 项目设置 → 常规 → Web 应用 → 复制配置
+          </p>
+          <div class="setting-item">
+            <label>API Key</label>
+            <input type="text" id="setting-fb-apikey" placeholder="AIza...">
+          </div>
+          <div class="setting-item">
+            <label>Auth Domain</label>
+            <input type="text" id="setting-fb-domain" placeholder="your-project.firebaseapp.com">
+          </div>
+          <div class="setting-item">
+            <label>Project ID</label>
+            <input type="text" id="setting-fb-projectid" placeholder="your-project-id">
+          </div>
+          <button id="btn-save-firebase-config" class="btn-primary">保存同步配置</button>
+          <div id="sync-status-section" style="margin-top:16px;display:none">
+            <div class="sync-status-bar" id="sync-status-bar">
+              <span class="sync-status-dot"></span>
+              <span class="sync-status-text"></span>
+            </div>
+            <div id="sync-account-actions" style="margin-top:12px;display:none">
+              <button id="btn-sync-login" class="btn-outline">登录账号</button>
+              <button id="btn-sync-logout" class="btn-danger" style="display:none">退出登录</button>
+            </div>
+          </div>
+
+          <hr>
+          <h3>数据管理</h3>
+          <div class="setting-actions">
+            <button id="btn-settings-export" class="btn-outline">📥 导出所有数据</button>
+            <button id="btn-settings-import" class="btn-outline">📤 导入数据</button>
+            <button id="btn-reset-templates" class="btn-danger">🔄 重置模板为默认</button>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 模板编辑弹窗 -->
+  <div id="template-modal" class="modal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 id="template-modal-title">新建模板</h3>
+        <button class="modal-close" onclick="closeTemplateModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>模板名称</label>
+          <input type="text" id="tpl-name" placeholder="例如：报价模板">
+        </div>
+        <div class="form-group">
+          <label>分类</label>
+          <input type="text" id="tpl-category" placeholder="例如：报价、跟进、物流" list="category-list">
+          <datalist id="category-list"></datalist>
+        </div>
+        <div class="form-group">
+          <label>模板内容</label>
+          <textarea id="tpl-content" rows="8" placeholder="使用 {{变量名}} 标记变量，例如：&#10;Hi {{name}}，这是 {{product}} 的报价：{{price}}"></textarea>
+          <p class="form-hint">可用变量：<span id="tpl-variables-hint"></span></p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-outline" onclick="closeTemplateModal()">取消</button>
+        <button class="btn-primary" id="btn-save-template">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 客户编辑弹窗 -->
+  <div id="customer-modal" class="modal" style="display:none">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>编辑客户</h3>
+        <button class="modal-close" onclick="closeCustomerModal()">×</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <label>客户名称</label>
+          <input type="text" id="cust-name">
+        </div>
+        <div class="form-group">
+          <label>手机号</label>
+          <input type="text" id="cust-phone" readonly>
+        </div>
+        <div class="form-group">
+          <label>公司</label>
+          <input type="text" id="cust-company">
+        </div>
+        <div class="form-group">
+          <label>国家/地区</label>
+          <input type="text" id="cust-country">
+        </div>
+        <div class="form-group">
+          <label>标签（逗号分隔）</label>
+          <input type="text" id="cust-tags" placeholder="VIP, 意向客户">
+        </div>
+        <div class="form-group">
+          <label>备注</label>
+          <textarea id="cust-notes" rows="4"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn-danger" id="btn-delete-customer">删除客户</button>
+        <button class="btn-outline" onclick="closeCustomerModal()">取消</button>
+        <button class="btn-primary" id="btn-save-customer">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="lib/firebase-app-compat.js"></script>
+  <script src="lib/firebase-auth-compat.js"></script>
+  <script src="lib/firebase-firestore-compat.js"></script>
+  <script src="shared/sync.js"></script>
+  <script src="shared/storage.js"></script>
+  <script src="shared/templates.js"></script>
+  <script src="shared/analytics.js"></script>
+  <script src="dashboard.js"></script>
+</body>
+</html>
